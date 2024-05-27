@@ -58,7 +58,7 @@
 		<hikari.version>5.0.1</hikari.version>
 		<hsqldb.version>2.7.1</hsqldb.version>
 		<mariadb-connector.version>3.1.0</mariadb-connector.version>
-		<pgjdbc.version>42.5.1</pgjdbc.version>
+		<pgjdbc.version>42.5.5</pgjdbc.version>
 		<caffeine.version>3.1.2</caffeine.version>
 		<flyway.version>8.2.0</flyway.version>
 		<jooq.version>3.18.3</jooq.version>
