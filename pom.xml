@@ -45,7 +45,7 @@
 		<!-- Testing dependencies -->
 		<junit.version>5.9.1</junit.version>
 		<mockito.version>4.9.0</mockito.version>
-		<h2.version>2.1.210</h2.version>
+		<h2.version>2.2.220</h2.version>
 
 		<!-- API dependencies -->
 		<omnibus.version>1.1.0-RC2</omnibus.version>
