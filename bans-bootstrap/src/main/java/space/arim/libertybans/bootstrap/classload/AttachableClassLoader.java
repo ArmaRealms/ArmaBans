@@ -1,6 +1,6 @@
 /*
  * LibertyBans
- * Copyright © 2022 Anand Beh
+ * Copyright © 2025 Anand Beh
  *
  * LibertyBans is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
@@ -17,7 +17,7 @@
  * and navigate to version 3 of the GNU Affero General Public License.
  */
 
-package space.arim.libertybans.bootstrap;
+package space.arim.libertybans.bootstrap.classload;
 
 import space.arim.libertybans.bootstrap.depend.BootstrapException;
 import space.arim.libertybans.bootstrap.depend.JarAttachment;
@@ -26,16 +26,17 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.nio.file.Path;
+import java.util.Arrays;
 
-final class AttachableClassLoader extends URLClassLoader implements JarAttachment {
+public final class AttachableClassLoader extends URLClassLoader implements JarAttachment {
 
 	static {
 		ClassLoader.registerAsParallelCapable();
 	}
 
-	AttachableClassLoader(String classLoaderName, ClassLoader parent) {
+	public AttachableClassLoader(String classLoaderName, ClassLoader parent) {
 		super(classLoaderName, new URL[] {}, parent);
-	}
+    }
 
 	@Override
 	public void addJarPath(Path jarFile) {
@@ -46,5 +47,13 @@ final class AttachableClassLoader extends URLClassLoader implements JarAttachmen
 			throw new BootstrapException("Unable to convert Path to URL", ex);
 		}
 		addURL(url);
+	}
+
+	@Override
+	public String toString() {
+		return getClass().getName() + '{' +
+				"urls=" + Arrays.toString(getURLs()) +
+				", parent=" + getParent() +
+				'}';
 	}
 }
