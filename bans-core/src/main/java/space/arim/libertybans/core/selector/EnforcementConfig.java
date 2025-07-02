@@ -142,7 +142,7 @@ public interface EnforcementConfig {
 
 	@ConfKey("alts-registry")
 	@SubSection
-	AltsRegistry altsRegistry();
+	AltsRegistry altsRegistry(); // Sensitive name used in integration testing
 
 	@ConfHeader({"Controls if all servers should register the IP address of the player connecting."})
 	interface AltsRegistry {
@@ -150,16 +150,17 @@ public interface EnforcementConfig {
 		@ConfComments({"The server names in this list will be excluded from associating the IP address of the player connecting.",
 				"Please note that the server's name in the list should be the same as the ones in your proxy configuration.",
 				"This is intended to be used by LibertyBans proxy installations.",
-				"If you are planning to use this feature, you MUST enable the 'enforce-server-switch' option."
+				"If you are planning to use this feature, you MUST enable the 'enforce-server-switch' option.",
+				"If you are not using LibertyBans in the proxy, you should leave this list empty."
 				})
 		@ConfKey("servers-without-ip-registration")
-		@DefaultStrings({"auth"})
+		@DefaultStrings({"auth", "server-name"})
 		List<String> serversWithoutRegistration();
 
 		@ConfComments({"If you want to register the IP address of the player connecting, set this to true.",
 				"If you are running a proxy and don't want to register the IP when players connect, ",
-				"set this to false and add the authentication servers' names in the list above.",
-				"If this is a backend server, set it to false; if it's an authentication server, set to true."})
+				"set this to false and add the servers' names in the list above.",
+				})
 		@ConfKey("should-register-on-connection")
 		@ConfDefault.DefaultBoolean(true)
 		boolean shouldRegisterOnConnection();

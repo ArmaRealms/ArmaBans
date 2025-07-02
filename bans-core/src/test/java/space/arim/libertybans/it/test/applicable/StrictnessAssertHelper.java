@@ -1,6 +1,6 @@
 /*
  * LibertyBans
- * Copyright © 2021 Anand Beh
+ * Copyright © 2025 Anand Beh
  *
  * LibertyBans is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
@@ -28,6 +28,8 @@ import space.arim.libertybans.api.punish.Punishment;
 import space.arim.libertybans.api.punish.PunishmentDrafter;
 import space.arim.libertybans.api.select.PunishmentSelector;
 import space.arim.libertybans.core.selector.Guardian;
+import space.arim.libertybans.it.ConfigSpec;
+import space.arim.libertybans.it.SetAltRegistry;
 import space.arim.libertybans.it.env.platform.QuackPlatform;
 import space.arim.libertybans.it.env.platform.QuackPlayer;
 import space.arim.libertybans.it.env.platform.QuackPlayerBuilder;
@@ -45,18 +47,25 @@ public class StrictnessAssertHelper {
 	private final PunishmentSelector selector;
 	private final Guardian guardian;
 	private final QuackPlatform platform;
+	private final ConfigSpec configSpec;
 
 	@Inject
 	public StrictnessAssertHelper(PunishmentDrafter drafter, PunishmentSelector selector,
-								  Guardian guardian, QuackPlatform platform) {
+                                  Guardian guardian, QuackPlatform platform, ConfigSpec configSpec) {
 		this.drafter = drafter;
 		this.selector = selector;
 		this.guardian = guardian;
 		this.platform = platform;
-	}
+        this.configSpec = configSpec;
+    }
 
 	private Component connectAndGetMessage(UUID uuid, String name, NetworkAddress address) {
-		return guardian.executeAndCheckConnection(uuid, name, address).join();
+		Component message = guardian.executeAndCheckConnection(uuid, name, address).join();
+		// If alt registry uses ON_CONNECTION, then executeAndCheckConnection should suffice
+		if (message != null || configSpec.altRegistryOption() == SetAltRegistry.Option.ON_CONNECTION) {
+			return message;
+		}
+		return guardian.checkServerSwitch(uuid, name, address, "please_register").join();
 	}
 
 	public void connectAndAssertUnbannedUser(UUID uuid, String name, NetworkAddress address) {
@@ -91,6 +100,7 @@ public class StrictnessAssertHelper {
 		assertNotNull(punishment, assertion);
 
 		QuackPlayer player = new QuackPlayerBuilder(platform).buildRandomName(uuid, address);
+		platform.login(player);
 		punishment.enforcePunishment().toCompletableFuture().join();
 		assertFalse(player.isStillOnline(), assertion + "; Player should have been kicked");
 	}
